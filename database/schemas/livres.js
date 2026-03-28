@@ -2,7 +2,7 @@ db.createCollection("livres", {
    validator: {
       $jsonSchema: {
          bsonType: "object",
-         required: ["titre", "auteur", "annee_publication"],
+         required: ["titre", "auteur", "annee_publication"], // champs obligatoires
          properties: {
             titre: { 
                bsonType: "string", 

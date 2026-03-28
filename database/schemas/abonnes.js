@@ -2,7 +2,7 @@ db.createCollection("abonnes", {
    validator: {
       $jsonSchema: {
          bsonType: "object",
-         required: ["nom", "email", "date_inscription"],
+         required: ["nom", "email", "date_inscription"], // champs obligatoires
          properties: {
             nom: { bsonType: "string" },
             prenom: { bsonType: "string" },

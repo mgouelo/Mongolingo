@@ -17,7 +17,7 @@ export default function MongolingoApp() {
 
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState(false); // afficher un pop-up avec les schémas 
 
-  // Charger une question aléatoire
+  // Charger une question aléatoire parmis les 35
   const loadRandomQuestion = () => {
     const randomIndex = Math.floor(Math.random() * questions.length);
     const q = questions[randomIndex];
@@ -34,9 +34,10 @@ export default function MongolingoApp() {
   };
 
   useEffect(() => {
-    loadRandomQuestion();
+    loadRandomQuestion(); // ordre aléatoire
   }, []);
 
+  // permet de sélectionner un block
   const handleSelectBlock = (block, index) => {
     setSelectedBlocks([...selectedBlocks, block]);
     const newAvailable = [...availableBlocks];
@@ -44,6 +45,7 @@ export default function MongolingoApp() {
     setAvailableBlocks(newAvailable);
   };
 
+  // permet de désélectionner un block
   const handleRemoveBlock = (block, index) => {
     setAvailableBlocks([...availableBlocks, block]);
     const newSelected = [...selectedBlocks];
@@ -105,7 +107,7 @@ export default function MongolingoApp() {
     } catch(err) {
       alert("Erreur réseau lors de l'import");
     }
-    e.target.value = null; // Reset
+    e.target.value = null; // reset
   };
 
   // fonction de réinitialisation de la base

@@ -1,4 +1,3 @@
-// Fichier : app/api/execute/route.js
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
@@ -60,7 +59,9 @@ export async function POST(request) {
         }
         resultat = await cursor.toArray();
         break;
-
+      
+      
+      // execution en base des differents type de requpetes etudies
       case 'aggregate':
         resultat = await collection.aggregate(...args).toArray();
         break;
