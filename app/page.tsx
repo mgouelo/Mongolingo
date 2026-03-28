@@ -89,7 +89,7 @@ export default function MongolingoApp() {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!confirm(" ⚠️ Voulez-vous vraiment écraser la base actuelle avec le fichier ${file.name} ?")) {
+    if (!confirm(`⚠️ Voulez-vous vraiment écraser la base actuelle avec le fichier ${file.name} ? `)) {
       e.target.value = null; // Reset de l'input
       return;
     }
@@ -110,7 +110,7 @@ export default function MongolingoApp() {
 
   // fonction de réinitialisation de la base
   const handleReset = async () => {
-    if (!confirm("⚠️ Attention, cela va effacer toutes tes modifications (insertions, suppressions) et remettre les données de départ. Continuer ?")) return;
+    if (!confirm("⚠️ Attention, cela va effacer toutes tes modifications (insertions, suppressions) et remettre les données de départ. Continuer ? ")) return;
 
     try {
       const res = await fetch('/api/reset', { method: 'POST' });
