@@ -65,6 +65,31 @@ export async function POST(request) {
         resultat = await collection.aggregate(...args).toArray();
         break;
 
+      case 'insertOne':
+        resultat = await collection.insertOne(...args);
+        break;
+
+      case 'insertMany':
+        // args[0] contient le tableau d'objets
+        resultat = await collection.insertMany(args[0]); 
+        break;
+
+      case 'updateOne':
+        resultat = await collection.updateOne(args[0], args[1]);
+        break;
+
+      case 'updateMany':
+        resultat = await collection.updateMany(args[0], args[1]);
+        break;
+
+      case 'deleteOne':
+        resultat = await collection.deleteOne(...args);
+        break;
+
+      case 'deleteMany':
+        resultat = await collection.deleteMany(...args);
+        break;
+
       default:
         return NextResponse.json({ error: `La méthode ${methodName} n'est pas supportée par cette API.` }, { status: 400 });
     }
