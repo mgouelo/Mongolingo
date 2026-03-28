@@ -15,6 +15,8 @@ export default function MongolingoApp() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [textInput, setTextInput] = useState(""); // stocker la saisie libre des questions extrême
 
+  const [isSchemaModalOpen, setIsSchemaModalOpen] = useState(false); // afficher un pop-up avec les schémas 
+
   // Charger une question aléatoire
   const loadRandomQuestion = () => {
     const randomIndex = Math.floor(Math.random() * questions.length);
@@ -54,8 +56,8 @@ export default function MongolingoApp() {
     // si niveau extreme on prends le textinput sinon c'est les blocs
     const rawUserQuery = currentQuestion.niveau === "extrême" ? textInput : selectedBlocks.join('') 
 
-    const userQuery = rawUserQuery.replace(/\s/g, '');
-    const solution = currentQuestion.solutionAttendue.replace(/\s/g, '');
+    const userQuery = rawUserQuery.replace(/\s/g, '').toLowerCase();
+    const solution = currentQuestion.solutionAttendue.replace(/\s/g, '').toLowerCase();
 
     const isAnswerCorrect = userQuery === solution // comparaison avec la solution
     
@@ -214,10 +216,18 @@ export default function MongolingoApp() {
       {/* CONTENEUR PRINCIPAL */}
       <div className="max-w-3xl mx-auto mt-10 px-8 pb-12 space-y-8">
         
-        {/* explique les schémas à l'utilisateur */}
-        <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100">
-          <strong>💡 Astuce :</strong> Notre bibliothèque contient 3 collections : <code>livres</code>, <code>abonnes</code> et <code>emprunts</code>. 
-          Les emprunts relient un abonné et un livre via leurs <code>_id</code>.
+        {/* Encart Astuce avec bouton Pop-up qui explique les schémas à l'utilisateur */}
+        <div className="bg-blue-50 text-blue-800 p-5 rounded-xl text-sm border border-blue-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            <strong>💡 Astuce :</strong> Notre bibliothèque contient 3 collections : <code>livres</code>, <code>abonnes</code> et <code>emprunts</code>. 
+            Les emprunts relient un abonné et un livre via leurs <code>_id</code>.
+          </div>
+          <button 
+            onClick={() => setIsSchemaModalOpen(true)}
+            className="whitespace-nowrap px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            👁️ Voir les schémas
+          </button>
         </div>
 
         {/* question */}
@@ -228,7 +238,7 @@ export default function MongolingoApp() {
           {currentQuestion.niveau === "extrême" ? (
             <div className="mb-8">
               <div className="bg-orange-50 text-orange-800 p-3 rounded-lg text-sm mb-4 border border-orange-200">
-                🔥 <strong>Mode Extrême activé !</strong> Tape la requête complète. N'oublie pas les accents, trait d'union (<code>-</code>) pour les noms...
+                🔥 <strong>Mode Extrême activé !</strong> Tape la requête complète. N'oublie pas les guilletmets pour les string, les accents, trait d'union (<code>-</code>) pour certains noms propre...
               </div>
               <textarea 
                 value={textInput}
@@ -325,6 +335,72 @@ export default function MongolingoApp() {
           </div>
         )}
       </div>
+
+      {/* POP-UP DES SCHÉMAS */}
+      {isSchemaModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center mb-6 border-b pb-4">
+              <h2 className="text-2xl font-bold text-slate-800">Schémas des Collections MongoDB</h2>
+              <button 
+                onClick={() => setIsSchemaModalOpen(false)}
+                className="text-slate-400 hover:text-red-500 font-bold text-xl p-2 transition-colors"
+                title="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <p className="text-slate-600 text-sm">
+                Voici la structure imposée par nos règles de validation (JSON Schema). Notez que MongoDB est flexible (NoSQL) : vous pouvez ajouter des champs supplémentaires (comme `tags`, `note`, `stock`) à volonté, mais les champs listés ci-dessous sont <strong>obligatoires</strong>.
+              </p>
+
+              {/* Collection Livres */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h3 className="font-bold text-lg text-indigo-700 mb-2 font-mono">📦 db.livres</h3>
+                <ul className="list-disc pl-5 text-sm space-y-1 text-slate-700 font-mono">
+                  <li><span className="font-bold text-slate-900">titre</span> : string</li>
+                  <li><span className="font-bold text-slate-900">auteur</span> : string</li>
+                  <li><span className="font-bold text-slate-900">annee_publication</span> : int</li>
+                </ul>
+              </div>
+
+              {/* Collection Abonnés */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h3 className="font-bold text-lg text-indigo-700 mb-2 font-mono">📦 db.abonnes</h3>
+                <ul className="list-disc pl-5 text-sm space-y-1 text-slate-700 font-mono">
+                  <li><span className="font-bold text-slate-900">nom</span> : string</li>
+                  <li><span className="font-bold text-slate-900">email</span> : string</li>
+                  <li><span className="font-bold text-slate-900">date_inscription</span> : date</li>
+                </ul>
+              </div>
+
+              {/* Collection Emprunts */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h3 className="font-bold text-lg text-indigo-700 mb-2 font-mono">📦 db.emprunts</h3>
+                <ul className="list-disc pl-5 text-sm space-y-1 text-slate-700 font-mono">
+                  <li><span className="font-bold text-slate-900">id_abonne</span> : ObjectId</li>
+                  <li><span className="font-bold text-slate-900">id_livre</span> : ObjectId</li>
+                  <li><span className="font-bold text-slate-900">date_emprunt</span> : date</li>
+                  <li><span className="font-bold text-slate-900">statut</span> : string (uniquement "en cours", "rendu", ou "en retard")</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="mt-8 text-right">
+              <button 
+                onClick={() => setIsSchemaModalOpen(false)}
+                className="px-6 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition-colors"
+              >
+                Compris !
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </main>
   );
 }
